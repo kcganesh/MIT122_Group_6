@@ -5,7 +5,7 @@ include 'inc/header.php';
 ?>
 <section class="card">
   <h2>Report an Incident</h2>
-  <form id="incidentForm" method="post" action="actions/submit_incident.php">
+  <form id="incidentForm" method="post" action="actions/report_handler.php">
     <label>Title<input name="title" id="title" required></label>
     <label>Description<textarea name="description" rows="6"></textarea></label>
     <label>Severity

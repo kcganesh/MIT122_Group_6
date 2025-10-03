@@ -15,6 +15,11 @@ if (isset($_GET['error'])) $err = $_GET['error'];
     <label>Password<input type="password" name="password" required></label>
     <button type="submit">Login</button>
   </form>
-  <p class="muted">Use <strong>admin@cyberguard.local</strong> / <strong>Admin123!</strong> (after setup)</p>
+  <p class="muted">
+  <strong>Demo Accounts:</strong><br>
+  Admin → <code>admin@cyberguard.local</code> / <code>Admin123!</code><br>
+  Staff → <code>staff@cyberguard.local</code> / <code>Admin123!</code>
+  </p>
+
 </section>
 <?php include 'inc/footer.php'; ?>

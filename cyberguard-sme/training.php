@@ -21,25 +21,28 @@ include 'inc/header.php';
   <h2>Cybersecurity Awareness Center</h2>
   <p>Watch the short microlearning videos and click <em>Mark Complete</em> when finished.</p>
 
-  <?php foreach ($modules as $m): 
-      // extract youtube id for embed
-      preg_match('/v=([^&]+)/', $m['youtube_url'], $match);
-      $vid = $match[1] ?? null;
-  ?>
-    <article class="training">
-      <h3><?= sanitize($m['title']) ?></h3>
-      <p><?= sanitize($m['description']) ?></p>
-      <?php if ($vid): ?>
-        <div class="video">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/<?= sanitize($vid) ?>" frameborder="0" allowfullscreen></iframe>
-        </div>
-      <?php endif; ?>
-      <?php if (in_array($m['id'], $completed)): ?>
-        <div class="status done">Completed</div>
-      <?php else: ?>
-        <button class="btn mark-training" data-id="<?= $m['id'] ?>">Mark Complete</button>
-      <?php endif; ?>
-    </article>
-  <?php endforeach; ?>
+  <div class="training-grid">
+    <?php foreach ($modules as $m): 
+        preg_match('/v=([^&]+)/', $m['url'], $match);
+        $vid = $match[1] ?? null;
+    ?>
+      <article class="training">
+        <h3><?= sanitize($m['title']) ?></h3>
+        <p><?= sanitize($m['description']) ?></p>
+        <?php if ($vid): ?>
+          <div class="video">
+            <iframe src="https://www.youtube.com/embed/<?= sanitize($vid) ?>" frameborder="0" allowfullscreen></iframe>
+          </div>
+        <?php endif; ?>
+        <?php if (in_array($m['id'], $completed)): ?>
+          <div class="status done">Completed</div>
+        <?php else: ?>
+          <button class="btn mark-training" data-id="<?= $m['id'] ?>">Mark Complete</button>
+        <?php endif; ?>
+      </article>
+    <?php endforeach; ?>
+  </div>
 </section>
+
+
 <?php include 'inc/footer.php'; ?>

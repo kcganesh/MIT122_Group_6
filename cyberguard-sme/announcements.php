@@ -3,25 +3,11 @@ require_once 'inc/functions.php';
 require_login();
 $user = current_user();
 
-// Counts
-$stmt = $mysqli->prepare("SELECT COUNT(*) AS cnt FROM incidents WHERE status='open'");
-$stmt->execute(); $open = $stmt->get_result()->fetch_assoc()['cnt']; $stmt->close();
-
-$stmt = $mysqli->prepare("SELECT COUNT(*) AS cnt FROM incidents");
-$stmt->execute(); $total = $stmt->get_result()->fetch_assoc()['cnt']; $stmt->close();
-
-$stmt = $mysqli->prepare("SELECT COUNT(*) AS cnt FROM user_trainings WHERE user_id=? AND completed=1");
-$stmt->bind_param('i', $_SESSION['user_id']);
-$stmt->execute(); $completed = $stmt->get_result()->fetch_assoc()['cnt']; $stmt->close();
-
-$stmt = $mysqli->prepare("SELECT COUNT(*) AS cnt FROM training_modules");
-$stmt->execute(); $totalTrain = $stmt->get_result()->fetch_assoc()['cnt']; $stmt->close();
-
-// Fetch latest 3 announcements (for this user, with read flag)
+// Pull ALL announcements with read flag for this user
 $sql = "SELECT a.id, a.title, a.content, a.importance, a.created_at,
         (SELECT COUNT(*) FROM announcement_reads r WHERE r.announcement_id=a.id AND r.user_id=?) AS is_read
         FROM announcements a
-        ORDER BY a.created_at DESC LIMIT 3";
+        ORDER BY a.created_at DESC";
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
@@ -31,31 +17,11 @@ $stmt->close();
 include 'inc/header.php';
 ?>
 <section class="card">
-  <h2>Welcome, <?= sanitize($user['name']) ?></h2>
+  <h2>All Announcements</h2>
 
-  <div class="grid">
-    <div class="stat">Open Incidents<br><strong><?= $open ?></strong></div>
-    <div class="stat">Total Incidents<br><strong><?= $total ?></strong></div>
-    <div class="stat">Trainings Completed<br><strong><?= $completed ?>/<?= $totalTrain ?></strong></div>
-  </div>
-
-  <p>Quick actions:</p>
-  <div class="quick-actions">
-    <a class="btn" href="report_incident.php">Report an incident</a>
-    <a class="btn" href="training.php">Go to Awareness Center</a>
-    <a class="btn" href="cases.php">View incident tracker</a>
-  </div>
-</section>
-
-<!-- Announcements BELOW quick actions -->
-<section class="card">
-  <h3>Announcements</h3>
   <?php if ($anns->num_rows > 0): ?>
     <?php while($a=$anns->fetch_assoc()):
       $isRead = $a['is_read'] > 0;
-      // show up to 500 chars on dashboard
-      $content = $a['content'];
-      $snippet = (strlen($content) > 500) ? substr($content, 0, 500) . '…' : $content;
       $badgeColor = $a['importance'] === 'high' ? 'red' : ($a['importance'] === 'medium' ? 'orange' : 'blue');
     ?>
       <div class="announcement <?= $isRead ? 'read' : 'unread' ?>" data-id="<?= $a['id'] ?>">
@@ -66,7 +32,8 @@ include 'inc/header.php';
           </span>
         </div>
 
-        <p class="body-text"><?= nl2br(sanitize($snippet)) ?></p>
+        <!-- Show FULL content here -->
+        <p class="body-text"><?= nl2br(sanitize($a['content'])) ?></p>
 
         <div class="actions" style="display:flex;gap:8px;align-items:center;margin-top:6px;">
           <button type="button" class="mark-read-btn btn-small" <?= $isRead ? 'disabled' : '' ?>>
@@ -82,8 +49,7 @@ include 'inc/header.php';
   <?php endif; ?>
 
   <div style="margin-top:10px;">
-    <a class="btn" href="announcements.php">See Older Announcements</a>
+    <a class="btn" href="dashboard.php">Back to Dashboard</a>
   </div>
 </section>
-
 <?php include 'inc/footer.php'; ?>
