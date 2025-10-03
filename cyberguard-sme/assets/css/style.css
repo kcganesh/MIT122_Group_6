@@ -280,6 +280,7 @@ form button {
     height: 32px;
   }
 }
+/* Close the @media (max-width: 768px) block */
 
 /* === Training Grid === */
 .training-grid {
@@ -356,4 +357,5 @@ form button {
 .btn-small[disabled] {
   background: #9aa7b1;
   cursor: default;
+}
 }
